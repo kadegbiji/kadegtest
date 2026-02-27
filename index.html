@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Text Analyser</title>
+  <meta name="description" content="A simple text analysis tool — built as a CI/CD pipeline demonstration.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f5;
+      color: #1a1a1a;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+
+    header {
+      width: 100%;
+      max-width: 720px;
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .subtitle {
+      color: #555;
+      font-size: 0.95rem;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      width: 100%;
+      max-width: 720px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      margin-bottom: 1rem;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 200px;
+      font-size: 1rem;
+      font-family: inherit;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 0.75rem;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    textarea:focus {
+      border-color: #0070f3;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .stat {
+      text-align: center;
+      padding: 1rem;
+      background: #f9f9f9;
+      border-radius: 8px;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #0070f3;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: #666;
+      margin-top: 0.25rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .pipeline-note {
+      font-size: 0.85rem;
+      color: #888;
+      text-align: center;
+      margin-top: 0.5rem;
+    }
+
+    .pipeline-note a {
+      color: #0070f3;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Text Analyser</h1>
+    <p class="subtitle">Type or paste text below to see statistics update in real time.</p>
+  </header>
+
+  <div class="card">
+    <textarea
+      id="input"
+      placeholder="Start typing here, or paste in some text..."
+      autofocus
+    ></textarea>
+  </div>
+
+  <div class="card">
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-value" id="words">0</div>
+        <div class="stat-label">Words</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="chars">0</div>
+        <div class="stat-label">Characters</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="reading">0</div>
+        <div class="stat-label">Min. read</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="pipeline-note">
+    Deployed automatically via a CI/CD pipeline —
+    <a href="https://github.com" target="_blank" rel="noopener">view the source on GitHub</a>
+  </p>
+
+  <script>
+    // Inline versions of the functions from src/textUtils.js
+    // In a more complex project, these would be bundled from the source files.
+
+    function wordCount(text) {
+      if (!text || text.trim() === '') return 0;
+      return text.trim().split(/\s+/).length;
+    }
+
+    function charCount(text) {
+      if (!text) return 0;
+      return text.replace(/\s/g, '').length;
+    }
+
+    function readingTime(text) {
+      const WORDS_PER_MINUTE = 200;
+      const words = wordCount(text);
+      return Math.ceil(words / WORDS_PER_MINUTE);
+    }
+
+    const input = document.getElementById('input');
+    const wordsEl = document.getElementById('words');
+    const charsEl = document.getElementById('chars');
+    const readingEl = document.getElementById('reading');
+
+    function updateStats() {
+      const text = input.value;
+      wordsEl.textContent = wordCount(text);
+      charsEl.textContent = charCount(text);
+      readingEl.textContent = readingTime(text);
+    }
+
+    input.addEventListener('input', updateStats);
+    updateStats();
+  </script>
+
+</body>
+</html>
