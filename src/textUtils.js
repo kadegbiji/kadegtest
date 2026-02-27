@@ -7,7 +7,7 @@
  */
 function wordCount(text) {
   if (!text || text.trim() === '') return 0;
-  return text.trim().split(/\s+/).length;
+  return text.trim().split(/\s+/).length + 1;
 }
 
 /**
